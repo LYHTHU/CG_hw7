@@ -298,6 +298,28 @@ let uvToCubicPatch = (u, v, arg) => {
     // TO THE SURFACE. YOU CAN NORMALIZE THIS VECTOR TO GET THE SURFACE NORMAL.
 
     // FINALLY, RETURN [ x, y, z,  nx, ny, nz,  u, v ]
+
+    let getXYZ = (uu, vv) => {
+        let U = [uu * uu * uu, uu * uu, uu, 1], V = [vv * vv * vv, vv * vv, vv, 1];
+        let x = dotVec(U, mulMat4Vec4(arg[0], V));
+        let y = dotVec(U, mulMat4Vec4(arg[1], V));
+        let z = dotVec(U, mulMat4Vec4(arg[2], V));
+
+        return [x, y, z];
+    }
+
+    let p = getXYZ(u, v);
+    let pu = getXYZ(u + 0.001, v);
+    let pv = getXYZ(i, v + 0.001);
+
+    let v1 = subtract(pu, p), v2 = subtract(pv, p);
+    let n = normalize(cross(v1, v2));
+
+    let ret = p.concat(n);
+    ret.push(u);
+    ret.push(v);
+
+    return ret;
 }
 
 
