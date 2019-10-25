@@ -64,6 +64,47 @@ let multiply = (a, b) => {
    return c;
 }
 
+let mulMat4Vec4 = (m, v) => {
+    if (m.length != 16 || v.length != 4) {
+        throw "Invalid dimension!";
+    }
+    let ret = [];
+    for (let i = 0; i < 4; i ++) {
+        ret.push(0);
+        for (let j = 0; j < 4; j ++) {
+            ret[i] += m[j*4+i] * v[j];
+        }
+    }
+    return ret;
+}
+
+let mulvec4Mat4 = (v, m) => {
+    if (m.length != 16 || v.length != 4) {
+        throw "Invalid dimension!";
+    }
+    let ret = [];
+    for (let j = 0; j < 4; j++) {
+        ret.push(0);
+        for (let i = 0; i < 4; i++) {
+            ret[j] += m[j * 4 + i] * v[i];
+        }
+    }
+    return ret;
+}
+
+let dotVec = (a, b) => {
+    if (a.length != b.length) {
+        throw "Dim not match!";
+    } 
+    let ret = [];
+    for (let i = 0; i < a.length; i++) {
+        ret.push(a[i] * b[i]);
+    }
+    return ret;
+}
+
+
+
 let transpose = m => [ m[0],m[4],m[ 8],m[12],
                        m[1],m[5],m[ 9],m[13],
                        m[2],m[6],m[10],m[14],
@@ -146,6 +187,41 @@ function createMeshVertices(M, N, uvToShape, arg) {
     // THIS IS ESSENTIALLY WHAT YOU HAVE ALREADY IMPLEMENTED.
     // THE ONLY SIGNIFICANT DIFFERENCE IS THAT YOU NEED TO PASS IN
     // arg AS A THIRD ARGUMENT WHEN YOU CALL uvToShape().
+
+    let ret = [];
+    if (M == 1 && N == 1) {
+        throw "No triangles!";
+    }
+
+    let addTriangle = (a, b, c) => {
+        //  a, b, c are all [u, v] pairs.
+        let x = uvToShape(a[0], a[1], arg);
+        let y = uvToShape(b[0], b[1], arg);
+        let z = uvToShape(c[0], c[1], arg);
+        ret = ret.concat(x);
+        ret = ret.concat(y);
+        ret = ret.concat(z);
+    }
+
+    let dx = 1.0 / (M - 1), dy = 1.0 / (N - 1);
+    // zigzag
+    // There are N-1 rows, 1 => N-1
+    let num_triangles = 2 * (M - 1);
+
+    for (let r = 1; r < N; r++) {
+        let mdown = (r - 1) * dy, mup = r * dy;
+        let c = 1 - r % 2;
+        let sign = (r % 2 == 1 ? 1 : -1);
+        for (let t = 0; t < num_triangles; t += 2) {
+            let triangle = [];
+            // up triangle
+            addTriangle([c, mdown], [c, mup], [c + sign * dx, mdown])
+            c = c + sign * dx;
+            // down triangle
+            addTriangle([c - sign * dx, mup], [c, mdown], [c, mup])
+        }
+    }
+    return ret;
 
     return [ 0,0,0, 0,0,0, 0,0 ]; // THIS LINE IS JUST A DUMMY PLACEHOLDER.
 }
