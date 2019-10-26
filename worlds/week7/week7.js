@@ -217,7 +217,8 @@ function createMeshVertices(M, N, uvToShape, arg) {
         ret = ret.concat(z);
     }
 
-    let dx = 1.0 / (M - 1), dy = 1.0 / (N - 1);
+    let dx = 1.0 / (M - 1); 
+    let dy = 1.0 / (N - 1);
     // zigzag
     // There are N-1 rows, 1 => N-1
     let num_triangles = 2 * (M - 1);
@@ -290,11 +291,21 @@ let uvToCubicCurvesRibbon = (u, v, arg) => {
     let width = arg.width;
 
     let uvToXYZ = (uu, vv) => {
+        if (uu > 1) uu = 1.0;
+
         let n = Math.floor(uu / du); // 0 ~ N-1
-        let t = uu / du - n;
+        
+        // if (n >= N) console.log(n, uu, du);
+        // Flaot precision error
+
+        let t = uu*N - n;
+        
+        // sometime n == N, exceed the bound.
+
         let fx = arg.data[n][0]; 
         let fy = arg.data[n][1];
         let fz = arg.data[n][2];
+
         let x = func(fx, t);
         let y = func(fy, t);
         let z = func(fz, t);
@@ -302,9 +313,16 @@ let uvToCubicCurvesRibbon = (u, v, arg) => {
     }
 
     let p0 = uvToXYZ(u, v);
-    let p1 = uvToXYZ(u + 0.001, v);
+    let dp = [];
 
-    let dp = subtract(p1, p0);
+    if (u < 0.999) {
+        let p1 = uvToXYZ(u + 0.001, v);
+        dp = subtract(p1, p0);
+    }
+    else {
+        let p1 = uvToXYZ(u - 0.001, v);
+        dp = subtract(p0, p1);
+    }
 
     let dx = dp[0], dy = dp[1];
 
@@ -366,7 +384,7 @@ let uvToCubicPatch = (u, v, arg) => {
 
     let p = getXYZ(u, v);
     let pu = getXYZ(u + 0.001, v);
-    let pv = getXYZ(i, v + 0.001);
+    let pv = getXYZ(u, v + 0.001);
 
     let v1 = subtract(pu, p), v2 = subtract(pv, p);
     let n = normalize(cross(v1, v2));
