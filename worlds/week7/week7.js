@@ -278,6 +278,9 @@ let uvToCubicCurvesRibbon = (u, v, arg) => {
 
     // For now, just set Z as const
 
+    if (u > 1) u = 1.0;
+
+
     let func = (ft, t) => {
         let ret = 0;
         for (let i = 3; i >= 0; i--) {
@@ -291,8 +294,6 @@ let uvToCubicCurvesRibbon = (u, v, arg) => {
     let width = arg.width;
 
     let uvToXYZ = (uu, vv) => {
-        if (uu > 1) uu = 1.0;
-
         let n = Math.floor(uu / du); // 0 ~ N-1
         
         // if (n >= N) console.log(n, uu, du);
@@ -372,6 +373,7 @@ let uvToCubicPatch = (u, v, arg) => {
     // TO THE SURFACE. YOU CAN NORMALIZE THIS VECTOR TO GET THE SURFACE NORMAL.
 
     // FINALLY, RETURN [ x, y, z,  nx, ny, nz,  u, v ]
+    if (u > 1) u = 1.0;
 
     let getXYZ = (uu, vv) => {
         let U = [uu * uu * uu, uu * uu, uu, 1], V = [vv * vv * vv, vv * vv, vv, 1];
