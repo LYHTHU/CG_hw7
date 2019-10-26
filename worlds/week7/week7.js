@@ -10,11 +10,25 @@ let dot = (a, b) => {
    return value;
 }
 
+let add = (a, b) => {
+    let c = [];
+    for (let i = 0; i < a.length; i++)
+        c.push(a[i] + b[i]);
+    return c;
+}
+
 let subtract = (a,b) => {
    let c = [];
    for (let i = 0 ; i < a.length ; i++)
       c.push(a[i] - b[i]);
    return c;
+}
+
+let multVecScale = (a, vec) => {
+    let c = [];
+    for (let i = 0; i < vec.length; i++)
+        c.push(vec[i] * a);
+    return c;
 }
 
 let normalize = a => {
@@ -222,8 +236,6 @@ function createMeshVertices(M, N, uvToShape, arg) {
         }
     }
     return ret;
-
-    return [ 0,0,0, 0,0,0, 0,0 ]; // THIS LINE IS JUST A DUMMY PLACEHOLDER.
 }
 
 // FOR uvCubicCurvesRibbon(), arg IS IN THE BELOW FORM:
@@ -261,6 +273,50 @@ let uvToCubicCurvesRibbon = (u, v, arg) => {
     // COMPUTE A CORRECT VALUE FOR THE SURFACE NORMAL AT EACH VERTEX.
     // IF YOU CAN'T FIGURE OUT HOW TO PRODUCE A RIBBON THAT VARIES IN Z,
     // IT IS OK TO CREATE A RIBBON WHERE ALL THE Z VALUES ARE THE SAME.
+
+
+    // For now, just set Z as const
+
+    let func = (ft, t) => {
+        let ret = 0;
+        for (let i = 3; i >= 0; i--) {
+            ret += (ft[3-i] * Math.pow(t, i));
+        }
+        return ret;
+    }
+
+    let N = arg.data.length;
+    let du = 1 / N;
+    let width = arg.width;
+
+    let uvToXYZ = (uu, vv) => {
+        let n = Math.floor(uu / du); // 0 ~ N-1
+        let t = uu / du - n;
+        let fx = arg.data[n][0]; 
+        let fy = arg.data[n][1];
+        let fz = arg.data[n][2];
+        let x = func(fx, t);
+        let y = func(fy, t);
+        let z = func(fz, t);
+        return [x, y, z];
+    }
+
+    let p0 = uvToXYZ(u, v);
+    let p1 = uvToXYZ(u + 0.001, v);
+
+    let dp = subtract(p1, p0);
+
+    let dx = dp[0], dy = dp[1];
+
+    let delta = multVecScale(0.5*width, normalize([-dy, dx, 0]));
+
+    let ret = add(p0, multVecScale(2 * v - 1, delta));
+
+    let normal = [0, 0, 1];
+    ret = ret.concat(normal);
+    ret.push(u);
+    ret.push(v);
+    return ret;
 }
 
 
