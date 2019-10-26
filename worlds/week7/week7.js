@@ -294,7 +294,7 @@ let uvToCubicCurvesRibbon = (u, v, arg) => {
     let width = arg.width;
 
     let uvToXYZ = (uu, vv) => {
-        let n = Math.floor(uu / du); // 0 ~ N-1
+        let n = Math.floor(uu / (du+1e-4)); // 0 ~ N-1
         
         // if (n >= N) console.log(n, uu, du);
         // Flaot precision error
