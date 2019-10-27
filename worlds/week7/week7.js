@@ -659,11 +659,13 @@ function onDraw(t, projMat, viewMat, state, eyeIdx) {
 
     m.save();
     m.translate(0,0,-3.5);
+    m.rotateY(state.time);
     drawShape([0,0,1], gl.TRIANGLE_STRIP, hermiteCurveVertices);
     m.restore();
 
     m.save();
     m.translate(0,0,-3);
+    m.rotateY(state.time);
     drawShape([1,0,1], gl.TRIANGLE_STRIP, bezierCurveVertices);
     m.restore();
 
