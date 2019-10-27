@@ -106,19 +106,6 @@ let mulvec4Mat4 = (v, m) => {
     return ret;
 }
 
-let dotVec = (a, b) => {
-    if (a.length != b.length) {
-        throw "Dim not match!";
-    } 
-    let ret = [];
-    for (let i = 0; i < a.length; i++) {
-        ret.push(a[i] * b[i]);
-    }
-    return ret;
-}
-
-
-
 let transpose = m => [ m[0],m[4],m[ 8],m[12],
                        m[1],m[5],m[ 9],m[13],
                        m[2],m[6],m[10],m[14],
@@ -228,7 +215,6 @@ function createMeshVertices(M, N, uvToShape, arg) {
         let c = 1 - r % 2;
         let sign = (r % 2 == 1 ? 1 : -1);
         for (let t = 0; t < num_triangles; t += 2) {
-            let triangle = [];
             // up triangle
             addTriangle([c, mdown], [c, mup], [c + sign * dx, mdown])
             c = c + sign * dx;
@@ -278,8 +264,9 @@ let uvToCubicCurvesRibbon = (u, v, arg) => {
 
     // For now, just set Z as const
 
-    if (u > 1) u = 1.0;
-
+    if (u > 1) {
+        u = 1.0;
+    }
 
     let func = (ft, t) => {
         let ret = 0;
@@ -294,7 +281,7 @@ let uvToCubicCurvesRibbon = (u, v, arg) => {
     let width = arg.width;
 
     let uvToXYZ = (uu, vv) => {
-        let n = Math.floor(uu / (du+1e-4)); // 0 ~ N-1
+        let n = Math.floor(uu / (du+(1e-5)*du)); // 0 ~ N-1
         
         // if (n >= N) console.log(n, uu, du);
         // Flaot precision error
@@ -335,6 +322,7 @@ let uvToCubicCurvesRibbon = (u, v, arg) => {
     ret = ret.concat(normal);
     ret.push(u);
     ret.push(v);
+    // console.log(ret);
     return ret;
 }
 
@@ -377,9 +365,9 @@ let uvToCubicPatch = (u, v, arg) => {
 
     let getXYZ = (uu, vv) => {
         let U = [uu * uu * uu, uu * uu, uu, 1], V = [vv * vv * vv, vv * vv, vv, 1];
-        let x = dotVec(U, mulMat4Vec4(arg[0], V));
-        let y = dotVec(U, mulMat4Vec4(arg[1], V));
-        let z = dotVec(U, mulMat4Vec4(arg[2], V));
+        let x = dot(U, mulMat4Vec4(arg[0], V));
+        let y = dot(U, mulMat4Vec4(arg[1], V));
+        let z = dot(U, mulMat4Vec4(arg[2], V));
 
         return [x, y, z];
     }
@@ -394,7 +382,6 @@ let uvToCubicPatch = (u, v, arg) => {
     let ret = p.concat(n);
     ret.push(u);
     ret.push(v);
-
     return ret;
 }
 
