@@ -211,8 +211,10 @@ function createMeshVertices(M, N, uvToShape, arg) {
     let num_triangles = 2 * (M - 1);
 
     for (let r = 1; r < N; r++) {
-        let c = 1 - r % 2;
-        let sign = (r % 2 == 1 ? 1 : -1);
+        // let c = 1 - r % 2;
+        // let sign = (r % 2 == 1 ? 1 : -1);
+        let sign = 1;
+        let c = 0;
         let mdown = (r - 1) * dy, mup = r * dy ;
         for (let t = 0; t < num_triangles; t += 2) {
             // up triangle
