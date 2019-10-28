@@ -211,9 +211,9 @@ function createMeshVertices(M, N, uvToShape, arg) {
     let num_triangles = 2 * (M - 1);
 
     for (let r = 1; r < N; r++) {
-        let mdown = (r - 1) * dy, mup = r * dy;
         let c = 1 - r % 2;
         let sign = (r % 2 == 1 ? 1 : -1);
+        let mdown = (r - 1) * dy, mup = r * dy ;
         for (let t = 0; t < num_triangles; t += 2) {
             // up triangle
             addTriangle([c, mdown], [c, mup], [c + sign * dx, mdown])
@@ -285,6 +285,8 @@ let uvToCubicCurvesRibbon = (u, v, arg) => {
         
         // if (n >= N) console.log(n, uu, du);
         // Flaot precision error
+        n = Math.min(n, N-1);
+        n = Math.max(n, 0);
 
         let t = uu*N - n;
         
@@ -368,7 +370,6 @@ let uvToCubicPatch = (u, v, arg) => {
         let x = dot(U, mulMat4Vec4(arg[0], V));
         let y = dot(U, mulMat4Vec4(arg[1], V));
         let z = dot(U, mulMat4Vec4(arg[2], V));
-
         return [x, y, z];
     }
 
