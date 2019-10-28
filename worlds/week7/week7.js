@@ -217,6 +217,8 @@ function createMeshVertices(M, N, uvToShape, arg) {
 
     for (let r = 1; r < N; r++) {
         // let c = 1 - r % 2;
+        // c = Math.max(c, 0)
+        // c = Math.min(c, 1)
         // let sign = (r % 2 == 1 ? 1 : -1);
         let sign = 1;
         let c = 0;
@@ -226,7 +228,7 @@ function createMeshVertices(M, N, uvToShape, arg) {
 
             addPoint(c, mdown);
             addPoint(c, mup);
-            c = c + sign * dx;
+            c = c + sign * dx ;
             addPoint(c, mdown)
             addPoint(c, mup);
         }
@@ -638,7 +640,7 @@ function onDraw(t, projMat, viewMat, state, eyeIdx) {
        }
     );
 
-    let st = 1 // 3 * state.time;
+    let st = 1 + 3 * state.time;
     let s0 = .7 * Math.sin(st);
     let s1 = .7 * Math.sin(st + 1);
     let s2 = .7 * Math.sin(st + 2);
@@ -659,8 +661,8 @@ function onDraw(t, projMat, viewMat, state, eyeIdx) {
             1  , 1  , 1  , 1
 	    ],
         [
-	        0,   s3,   s0,  0,
             s0,  s1,   s2, s3,
+            0,   s3,   s0,  0,
             s0,  s1,   s2, s3,
             0,   s0,   s3,  0
 	    ]
@@ -670,18 +672,22 @@ function onDraw(t, projMat, viewMat, state, eyeIdx) {
     m.save();
     m.translate(0,0,-3.5);
     m.rotateY(state.time);
+    m.rotateZ(state.time);
     drawShape([0,0,1], gl.TRIANGLE_STRIP, hermiteCurveVertices);
     m.restore();
 
     m.save();
     m.translate(0,0,-3);
     m.rotateY(state.time);
+    m.rotateZ(state.time);
     drawShape([1,0,1], gl.TRIANGLE_STRIP, bezierCurveVertices);
     m.restore();
 
     m.save();
     m.translate(0,0,-4);
-    m.scale(.6,.6,.6);
+    m.scale(.6,1.,.6);
+    m.rotateY(state.time);
+    m.rotateX(state.time)
     drawShape([1,1,1], gl.TRIANGLE_STRIP, bezierPatchVertices, 1);
     m.restore();
 }
