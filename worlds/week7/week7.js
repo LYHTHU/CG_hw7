@@ -204,6 +204,11 @@ function createMeshVertices(M, N, uvToShape, arg) {
         ret = ret.concat(z);
     }
 
+    let addPoint = (u, v) => {
+        let xyz = uvToShape(u, v, arg);
+        ret = ret.concat(xyz);
+    }
+
     let dx = 1.0 / (M - 1); 
     let dy = 1.0 / (N - 1);
     // zigzag
@@ -217,11 +222,13 @@ function createMeshVertices(M, N, uvToShape, arg) {
         let c = 0;
         let mdown = (r - 1) * dy, mup = r * dy ;
         for (let t = 0; t < num_triangles; t += 2) {
-            // up triangle
-            addTriangle([c, mdown], [c, mup], [c + sign * dx, mdown])
+            if (c > 1) break;
+
+            addPoint(c, mdown);
+            addPoint(c, mup);
             c = c + sign * dx;
-            // down triangle
-            addTriangle([c - sign * dx, mup], [c, mdown], [c, mup])
+            addPoint(c, mdown)
+            addPoint(c, mup);
         }
     }
     return ret;
