@@ -636,24 +636,24 @@ function onDraw(t, projMat, viewMat, state, eyeIdx) {
 
     let bezierPatchVertices = createMeshVertices(32, 32, uvToCubicPatch,
        toCubicPatchCoefficients(BezierBasisMatrix, [
-          [
-	    -1,-1/3, 1/3, 1,
+        [
+            -1,-1/3, 1/3, 1,
             -1,-1/3, 1/3, 1,
             -1,-1/3, 1/3, 1,
             -1,-1/3, 1/3, 1
-	  ],
-          [
-	    -1  ,-1  ,-1  ,-1,
+        ],
+        [
+	        -1  ,-1  ,-1  ,-1,
             -1/3,-1/3,-1/3,-1/3,
-             1/3, 1/3, 1/3, 1/3,
-             1  , 1  , 1  , 1
-	  ],
-          [
-	     0,   s3,   s0,  0,
-            s0,   s1,   s2, s3,
-            s0,   s1,   s2, s3,
-             0,   s0,   s3,  0
-	  ]
+            1/3, 1/3, 1/3, 1/3,
+            1  , 1  , 1  , 1
+	    ],
+        [
+	        0,   s3,   s0,  0,
+            s0,  s1,   s2, s3,
+            s0,  s1,   s2, s3,
+            0,   s0,   s3,  0
+	    ]
        ])
     );
 
